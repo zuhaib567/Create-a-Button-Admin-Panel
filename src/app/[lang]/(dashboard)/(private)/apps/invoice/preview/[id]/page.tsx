@@ -38,7 +38,7 @@ const PreviewPage = async ({ params }: { params: { id: string } }) => {
     redirect('/not-found')
   }
 
-  return filteredData ? <Preview invoiceData={filteredData} id={params.id} /> : null
+  return filteredData ? <Preview id={params.id} /> : null
 }
 
 export default PreviewPage
