@@ -32,7 +32,7 @@ const useImageSubmit = () => {
 
       const res = await addImage({ ...image_data })
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             return notifyError(errorData.message)
@@ -59,9 +59,9 @@ const useImageSubmit = () => {
       }
 
       const res = await editImage({ id, data: image_data })
-      // console.log(res)
+
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             return notifyError(errorData.message)

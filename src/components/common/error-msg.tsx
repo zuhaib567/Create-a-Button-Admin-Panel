@@ -2,6 +2,7 @@ import React from 'react'
 
 type ErrorType = {
   msg: string
+  mb?: string
 }
 
 const ErrorMsg = ({ msg, mb }: ErrorType) => {

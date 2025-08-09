@@ -81,7 +81,7 @@ const CategoryTables = () => {
                 {row.original.parent}
               </Typography>
               <Typography className='font-medium text-sm truncate w-96' color='text.primary'>
-                {row.original.description || 'No description'}
+                {row.original?.parent || 'No description'}
               </Typography>
             </div>
           </div>

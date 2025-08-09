@@ -38,9 +38,9 @@ const useCategorySubmit = () => {
       if (categoryChildren.length === 0) {
         return notifyError('Children is required')
       }
-      const res = await addCategory({ ...category_data })
+      const res = await addCategory({ ...category_data }).unwrap()
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             return notifyError(errorData.message)
@@ -70,10 +70,10 @@ const useCategorySubmit = () => {
       if (categoryChildren.length === 0) {
         return notifyError('Children is required')
       }
-      const res = await editCategory({ id, data: category_data })
-      // console.log(res)
+      const res = await editCategory({ id, data: category_data }).unwrap()
+
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             return notifyError(errorData.message)

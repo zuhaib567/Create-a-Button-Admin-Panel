@@ -59,7 +59,7 @@ const useTemplateSubmit = () => {
 
       const res = await addTemplate(template_data)
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             return notifyError(errorData.message)
@@ -92,7 +92,7 @@ const useTemplateSubmit = () => {
 
       const res = await editTemplate({ id, data: template_data })
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             return notifyError(errorData.message)

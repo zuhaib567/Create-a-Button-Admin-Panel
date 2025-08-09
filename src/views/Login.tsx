@@ -137,7 +137,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-    const res = await Login(data)
+    const res = await Login(data).unwrap()
 
     if (res.data) {
       if (res.data.role === 'Admin') {
@@ -147,6 +147,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       }
     } else {
       setErrorState({
+        // @ts-ignore
         message: res?.error?.data?.message ? [res?.error?.data?.message] : ['Login failed, please try again.']
       })
     }

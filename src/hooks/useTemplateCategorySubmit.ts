@@ -47,7 +47,7 @@ const useTemplateCategorySubmit = () => {
 
       const res = await addTemplateCategory(template_category_data)
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             notifyError(errorData.message)
@@ -77,7 +77,7 @@ const useTemplateCategorySubmit = () => {
       const res = await editTemplateCategory({ id, data: category_data })
 
       if ('error' in res) {
-        if ('data' in res.error) {
+        if ('data' in res.error!) {
           const errorData = res.error.data as { message?: string }
           if (typeof errorData.message === 'string') {
             notifyError(errorData.message)

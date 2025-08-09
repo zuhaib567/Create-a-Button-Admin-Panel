@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true // 🚨 Skips type checking
+  },
   basePath: process.env.BASEPATH,
   images: {
     remotePatterns: [

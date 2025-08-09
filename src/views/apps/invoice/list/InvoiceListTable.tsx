@@ -116,7 +116,9 @@ const SimpleSelectField = ({ row }: { row: Row<InvoiceTypeWithAction> }) => {
       select
       id={`select-status-${row.original._id}`}
       value={row.original.status}
-      onChange={e => handleStatusChange(row.original._id, e.target.value)}
+      onChange={e =>
+        handleStatusChange(row.original._id, e.target.value as 'delivered' | 'processing' | 'cancel' | 'pending')
+      }
       className='max-sm:is-full sm:is-[160px]'
       SelectProps={{ displayEmpty: true }}
     >

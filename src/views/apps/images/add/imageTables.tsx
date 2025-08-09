@@ -36,7 +36,7 @@ import {
 } from '@tanstack/react-table'
 
 import useImageSubmit from '@/hooks/useImageSubmit'
-import type { IImageItem } from '@/types/apps/imageTypes'
+import type { IImageItem, ImageRes } from '@/types/apps/imageTypes'
 import DebouncedInput from '@/components/common/debounced-input'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import { useDeleteImageMutation, useGetAllImagesQuery } from '@/redux-store/services/image'
@@ -57,7 +57,7 @@ const ImageTables = () => {
     }
   }, [images])
 
-  const columnHelper = createColumnHelper<IImageItem>()
+  const columnHelper = createColumnHelper<ImageRes>()
 
   const columns = useMemo(
     () => [
@@ -184,7 +184,7 @@ const ImageTables = () => {
             }}
           >
             <div className='col-span-12 lg:col-span-4'>
-              <form onSubmit={handleSubmit(handleSubmitImage)}>
+              <form onSubmit={handleSubmit(async data => await handleSubmitImage({ image_name: data.image_name }))}>
                 <div className='mb-6 bg-backgroundPaper px-6 py-8 rounded-md'>
                   <EditorImgUpload isSubmitted={isSubmitted} setImage={setEditorImg} image={editorImg} />
 

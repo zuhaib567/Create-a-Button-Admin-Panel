@@ -50,7 +50,7 @@ const useAuthSignUp = () => {
   })
 
   const onSubmit: SubmitHandler<FormData> = async (values: FormData) => {
-    const res = await register(values)
+    const res = await register(values).unwrap()
 
     if (res.data) {
       notifySuccess('Account created successfully')
