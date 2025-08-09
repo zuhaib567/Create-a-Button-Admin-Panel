@@ -1,0 +1,362 @@
+'use client'
+
+// React Imports
+import React, { useState, useEffect, useMemo } from 'react'
+
+// Next Imports
+import Link from 'next/link'
+import Image from 'next/image'
+import { useParams } from 'next/navigation'
+
+// MUI Imports
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import MenuItem from '@mui/material/MenuItem'
+import TablePagination from '@mui/material/TablePagination'
+import type { TextFieldProps } from '@mui/material/TextField'
+
+// Third-party Imports
+import classnames from 'classnames'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getFilteredRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFacetedMinMaxValues,
+  getPaginationRowModel,
+  getSortedRowModel
+} from '@tanstack/react-table'
+import type { ColumnDef, FilterFn } from '@tanstack/react-table'
+import type { RankingInfo } from '@tanstack/match-sorter-utils'
+
+// Type Imports
+import type { ThemeColor } from '@core/types'
+import type { InvoiceType } from '@/types/apps/invoiceTypes'
+import type { Locale } from '@configs/i18n'
+import type { IProduct } from '@/types/apps/productTypes'
+
+// Component Imports
+import OptionMenu from '@core/components/option-menu'
+import TablePaginationComponent from '@components/TablePaginationComponent'
+import CustomTextField from '@core/components/mui/TextField'
+
+// Util Imports
+import { getLocalizedUrl } from '@/utils/i18n'
+
+// Style Imports
+import tableStyles from '@core/styles/table.module.css'
+import { useGetAllProductsQuery } from '@/redux-store/services/product'
+import { Skeleton } from '@mui/material'
+import DebouncedInput from '@/components/common/debounced-input'
+
+declare module '@tanstack/table-core' {
+  interface FilterFns {
+    fuzzy: FilterFn<unknown>
+  }
+  interface FilterMeta {
+    itemRank: RankingInfo
+  }
+}
+
+type InvoiceTypeWithAction = IProduct & {
+  action?: string
+}
+
+type InvoiceStatusObj = {
+  [key: string]: {
+    icon: string
+    color: ThemeColor
+  }
+}
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value)
+
+  // Store the itemRank info
+  addMeta({
+    itemRank
+  })
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed
+}
+
+// Vars
+const invoiceStatusObj: InvoiceStatusObj = {
+  Sent: { color: 'secondary', icon: 'tabler-send-2' },
+  Paid: { color: 'success', icon: 'tabler-check' },
+  Draft: { color: 'primary', icon: 'tabler-mail' },
+  'Partial Payment': { color: 'warning', icon: 'tabler-chart-pie-2' },
+  'Past Due': { color: 'error', icon: 'tabler-alert-circle' },
+  Downloaded: { color: 'info', icon: 'tabler-arrow-down' }
+}
+
+// Column Definitions
+const columnHelper = createColumnHelper<InvoiceTypeWithAction>()
+
+const ProductListTable = () => {
+  // States
+  const [status, setStatus] = useState<InvoiceType['invoiceStatus']>('')
+  const [rowSelection, setRowSelection] = useState({})
+  const [globalFilter, setGlobalFilter] = useState('')
+  const { data: products, isLoading, isError } = useGetAllProductsQuery()
+  const [data, setData] = useState<IProduct[]>([])
+  const [filteredData, setFilteredData] = useState<IProduct[]>([])
+
+  // Hooks
+  const { lang: locale } = useParams()
+
+  useEffect(() => {
+    if (products?.data) {
+      setData(products.data)
+      setFilteredData(products.data)
+    }
+  }, [products])
+
+  const columns = useMemo<ColumnDef<InvoiceTypeWithAction, any>[]>(
+    () => [
+      columnHelper.accessor('title', {
+        header: 'Product',
+        cell: ({ row }) => (
+          <div>
+            <Image height={100} width={100} src={row.original.image} alt={row.original.title} />
+          </div>
+        )
+      }),
+      columnHelper.accessor('sku', {
+        header: 'Sku',
+        cell: ({ row }) => (
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.title}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('quantity', {
+        header: 'Quantity',
+        cell: ({ row }) => <Typography>{row.original.quantity}</Typography>
+      }),
+      columnHelper.accessor('price', {
+        header: 'Price',
+        cell: ({ row }) => <Typography>{`$${row.original.price}`}</Typography>
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+        cell: ({ row }) => <Typography>{row.original.status}</Typography>
+      }),
+      columnHelper.accessor('action', {
+        header: 'Action',
+        cell: ({ row }) => (
+          <div className='flex items-center'>
+            <IconButton
+              onClick={() => {
+                const updated = data.filter(product => product._id !== row.original._id)
+                setData(updated)
+                setFilteredData(updated)
+              }}
+            >
+              <i className='tabler-trash text-textSecondary' />
+            </IconButton>
+            <IconButton>
+              <Link
+                href={getLocalizedUrl(`/apps/invoice/preview/${row.original._id}`, locale as Locale)}
+                className='flex'
+              >
+                <i className='tabler-eye text-textSecondary' />
+              </Link>
+            </IconButton>
+            <OptionMenu
+              iconButtonProps={{ size: 'medium' }}
+              iconClassName='text-textSecondary'
+              options={[
+                {
+                  text: 'Download',
+                  icon: 'tabler-download',
+                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
+                },
+                {
+                  text: 'Edit',
+                  icon: 'tabler-pencil',
+                  href: getLocalizedUrl(`/apps/invoice/edit/${row.original._id}`, locale as Locale),
+                  linkProps: {
+                    className: 'flex items-center is-full plb-2 pli-4 gap-2 text-textSecondary'
+                  }
+                },
+                {
+                  text: 'Duplicate',
+                  icon: 'tabler-copy',
+                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
+                }
+              ]}
+            />
+          </div>
+        ),
+        enableSorting: false
+      })
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data, filteredData]
+  )
+
+  const table = useReactTable({
+    data: filteredData || [],
+    columns,
+    filterFns: {
+      fuzzy: fuzzyFilter
+    },
+    state: {
+      rowSelection,
+      globalFilter
+    },
+    initialState: {
+      pagination: {
+        pageSize: 10
+      }
+    },
+    enableRowSelection: true, //enable row selection for all rows
+    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    globalFilterFn: fuzzyFilter,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues()
+  })
+
+  useEffect(() => {
+    const filteredData = data?.filter(product => {
+      if (status && product.status.toLowerCase().replace(/\s+/g, '-') !== status) return false
+
+      return true
+    })
+
+    setFilteredData(filteredData!)
+  }, [status, data, setFilteredData])
+
+  if (isLoading) {
+    return <Skeleton variant='rounded' className='w-full' height={400} />
+  }
+
+  return (
+    <Card>
+      <CardContent className='flex justify-between flex-col items-start md:items-center md:flex-row gap-4'>
+        <div className='flex max-sm:flex-col max-sm:is-full sm:items-center gap-4'>
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onChange={value => setGlobalFilter(String(value))}
+            placeholder='Search Product'
+            className='max-sm:is-full sm:is-[250px]'
+          />
+          <CustomTextField
+            select
+            id='select-status'
+            value={status}
+            onChange={e => setStatus(e.target.value)}
+            className='max-sm:is-full sm:is-[160px]'
+            SelectProps={{ displayEmpty: true }}
+          >
+            <MenuItem value=''>Product Status</MenuItem>
+            <MenuItem value='active'>Active</MenuItem>
+            <MenuItem value='inactive'>Inactive</MenuItem>
+          </CustomTextField>
+        </div>
+        <div className='flex flex-col sm:flex-row items-center justify-between gap-4 is-full sm:is-auto'>
+          <div className='flex items-center gap-2 is-full sm:is-auto'>
+            <Typography className='hidden sm:block'>Show</Typography>
+            <CustomTextField
+              select
+              value={table.getState().pagination.pageSize}
+              onChange={e => table.setPageSize(Number(e.target.value))}
+              className='is-[70px] max-sm:is-full'
+            >
+              <MenuItem value='10'>10</MenuItem>
+              <MenuItem value='25'>25</MenuItem>
+              <MenuItem value='50'>50</MenuItem>
+            </CustomTextField>
+          </div>
+          <Button variant='contained' startIcon={<i className='tabler-plus' />}>
+            <Link href={`/${locale}/dashboard/products/add`}> Create Product</Link>
+          </Button>
+        </div>
+      </CardContent>
+      <div className='overflow-x-auto'>
+        <table className={tableStyles.table}>
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th key={header.id}>
+                    {header.isPlaceholder ? null : (
+                      <>
+                        <div
+                          className={classnames({
+                            'flex items-center': header.column.getIsSorted(),
+                            'cursor-pointer select-none': header.column.getCanSort()
+                          })}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {{
+                            asc: <i className='tabler-chevron-up text-xl' />,
+                            desc: <i className='tabler-chevron-down text-xl' />
+                          }[header.column.getIsSorted() as 'asc' | 'desc'] ?? null}
+                        </div>
+                      </>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          {table?.getFilteredRowModel()?.rows?.length === 0 ? (
+            <tbody>
+              <tr>
+                <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
+                  No data available
+                </td>
+              </tr>
+            </tbody>
+          ) : (
+            <tbody>
+              {table
+                ?.getRowModel()
+                ?.rows?.slice(0, table.getState().pagination.pageSize)!
+                .map(row => {
+                  return (
+                    <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                      {row.getVisibleCells().map(cell => (
+                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      ))}
+                    </tr>
+                  )
+                })}
+            </tbody>
+          )}
+        </table>
+      </div>
+      <TablePagination
+        component={() => <TablePaginationComponent table={table} />}
+        count={table.getFilteredRowModel().rows.length}
+        rowsPerPage={table.getState().pagination.pageSize}
+        page={table.getState().pagination.pageIndex}
+        onPageChange={(_, page) => {
+          table.setPageIndex(page)
+        }}
+        onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
+      />
+    </Card>
+  )
+}
+
+export default ProductListTable
