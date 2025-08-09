@@ -13,7 +13,6 @@ export type InvoiceClientType = {
   companyEmail: string
 }
 
-
 export type InvoiceType = {
   id: string
   name: string

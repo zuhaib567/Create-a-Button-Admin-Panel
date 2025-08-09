@@ -15,8 +15,9 @@ import Logo from '@components/layout/shared/Logo'
 import tableStyles from '@core/styles/table.module.css'
 import './print.css'
 import Image from 'next/image'
+import { Order } from '@/types/apps/orderTypes'
 
-const PreviewCard = ({ invoiceData, id }: { invoiceData?: InvoiceType; id: string }) => {
+const PreviewCard = ({ invoiceData }: { invoiceData: Order | undefined }) => {
   return (
     <Card className='previewCard'>
       <CardContent className='sm:!p-12'>
@@ -34,7 +35,7 @@ const PreviewCard = ({ invoiceData, id }: { invoiceData?: InvoiceType; id: strin
                 </div>
                 <div className='flex flex-col items-start sm:items-end gap-4'>
                   <Typography variant='h5'>{`Invoice #${invoiceData?.invoice}`}</Typography>
-                  <Typography>{`Order ID: ${invoiceData?.orderId}`}</Typography>
+                  <Typography>{`Order ID: ${invoiceData?._id}`}</Typography>
                   <Typography>{`Payment: ${invoiceData?.paymentMethod} (${invoiceData?.paymentStatus})`}</Typography>
                   <Typography>{`Status: ${invoiceData?.status}`}</Typography>
                 </div>
@@ -67,7 +68,7 @@ const PreviewCard = ({ invoiceData, id }: { invoiceData?: InvoiceType; id: strin
                     Product Image:
                   </Typography>
                   <div className='w-32 h-32 border rounded overflow-hidden'>
-                    <Image src={invoiceData?.image.url} alt='Product Image' width={128} height={128} />
+                    <Image src={invoiceData?.image.url!} alt='Product Image' width={128} height={128} />
                   </div>
                 </div>
               </Grid>
