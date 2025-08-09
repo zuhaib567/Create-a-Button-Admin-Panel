@@ -32,7 +32,7 @@ const InvoiceApp = async () => {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <InvoiceList invoiceData={data} />
+        <InvoiceList />
       </Grid>
     </Grid>
   )
