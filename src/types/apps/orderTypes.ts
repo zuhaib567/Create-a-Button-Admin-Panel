@@ -104,12 +104,12 @@ export interface IUpdateStatusOrderRes {
 
 export interface IGetWeeklyOrderCount {
   success: boolean
-  count: number
+  order: number[]
   message: string
 }
 
 export interface IGetMonthlyOrderCount {
   success: boolean
-  count: number
+  order: number[]
   message: string
 }

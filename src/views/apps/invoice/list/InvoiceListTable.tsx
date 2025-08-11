@@ -50,6 +50,7 @@ import tableStyles from '@core/styles/table.module.css'
 import DebouncedInput from '@/components/common/debounced-input'
 import { Row } from '@tanstack/react-table'
 import { Skeleton } from '@mui/material'
+import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -138,7 +139,8 @@ const InvoiceListTable = () => {
   const [data, setData] = useState<Order[]>([])
   const [filteredData, setFilteredData] = useState<Order[]>([])
 
-  const { data: orders, isLoading } = useGetAllOrdersQuery()
+  const { data: orders, isLoading, isError, error } = useGetAllOrdersQuery()
+  const { handleQueryError } = useQueryErrorHandler()
 
   // Hooks
   const { lang: locale } = useParams()
@@ -267,6 +269,12 @@ const InvoiceListTable = () => {
 
     setFilteredData(filteredData!)
   }, [status, data, setFilteredData])
+
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
 
   if (isLoading) {
     return (

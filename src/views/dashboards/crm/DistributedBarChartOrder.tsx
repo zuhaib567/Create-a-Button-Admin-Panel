@@ -20,28 +20,14 @@ const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexChart
 
 // Component
 const DistributedBarChartOrder = () => {
-  const { data, isLoading } = useGetWeeklyOrderCountQuery()
+  const { data: report, isLoading } = useGetWeeklyOrderCountQuery()
   const theme = useTheme()
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  // Current week data
-  const report = data?.report || []
-  const currentWeekAmounts: number[] = daysOfWeek.map(day => {
-    const match = report.find(item => item.day === day)
-    return match ? Number(match.totalAmount) : 0
-  })
+  const series = [{ data: report?.order }]
 
-  // Previous week total (replace this with backend data if available)
-  const previousWeekTotal = data?.previousWeekTotal || 0 // Ideally fetched from backend
-
-  const totalAmount = currentWeekAmounts.reduce((sum, val) => sum + val, 0)
-  const percentageChange =
-    previousWeekTotal && previousWeekTotal !== 0
-      ? Number((((totalAmount - previousWeekTotal) / previousWeekTotal) * 100).toFixed(1))
-      : 0
-
-  const series = [{ data: currentWeekAmounts }]
+  const totalWeeklyAmount = report?.order?.reduce((acc, curr) => acc + curr, 0)
 
   const actionSelectedColor = 'var(--mui-palette-action-selected)'
 
@@ -135,14 +121,7 @@ const DistributedBarChartOrder = () => {
         <AppReactApexCharts type='bar' height={84} width='100%' options={options} series={series} />
         <div className='flex items-center justify-between flex-wrap gap-x-4 gap-y-0.5'>
           <Typography variant='h4' color='text.primary'>
-            ${totalAmount.toLocaleString()}
-          </Typography>
-          <Typography
-            variant='body2'
-            color={percentageChange > 0 ? 'success.main' : percentageChange < 0 ? 'error.main' : 'text.secondary'}
-          >
-            {percentageChange > 0 ? '+' : ''}
-            {percentageChange}%
+            {totalWeeklyAmount?.toLocaleString() || 0}
           </Typography>
         </div>
       </CardContent>

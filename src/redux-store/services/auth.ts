@@ -4,9 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 // Common error type returned by the backend
 export interface ApiError {
-  data: {
-    message: string
-  }
+  message: string
 }
 
 export interface ErrorResponse {
@@ -20,16 +18,12 @@ export interface LoginRequest {
   password: string
 }
 export interface LoginResponse {
-  data?: {
-    token: string
-    user: {
-      id: string
-      name: string
-      email: string
-    }
-    role: string
-  }
-  error?: ApiError
+  _id: string
+  token: string
+  email: string
+  role: string
+  joiningDate: string
+  isGoogleSignup: boolean
 }
 
 // Register
@@ -73,7 +67,8 @@ export const authService = createApi({
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled
-          localStorage.setItem('token', JSON.stringify(data.data?.token))
+          console.log(data)
+          localStorage.setItem('token', JSON.stringify(data?.token))
         } catch (err) {
           // handle error if needed
         }
@@ -89,7 +84,7 @@ export const authService = createApi({
       }),
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
-          const { data } = await queryFulfilled
+          const data = await queryFulfilled
           localStorage.setItem('token', JSON.stringify(data.token))
         } catch (err) {
           // handle error if needed

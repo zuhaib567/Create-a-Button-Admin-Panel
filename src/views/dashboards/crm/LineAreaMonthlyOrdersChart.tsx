@@ -19,23 +19,14 @@ import { useGetMonthlyOrderCountQuery } from '@/redux-store/services/order'
 const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
 
 const LineAreaMonthlyOrdersChart = () => {
-  const { data, isLoading } = useGetMonthlyOrderCountQuery({ interval: 'month' })
+  const { data: report, isLoading } = useGetMonthlyOrderCountQuery()
   const theme = useTheme()
 
-  const report = data?.report || []
-
-  // Sort in chronological order just in case API doesn't return sorted
-  const sortedReport = [...report].sort((a, b) => {
-    if (a.year === b.year) return a.monthNumber - b.monthNumber
-    return a.year - b.year
-  })
-
-  // Extract months and values
-  const months = sortedReport.map(entry => entry.month)
-  const values = sortedReport.map(entry => Number(entry.count || 0))
-
   // Chart series
-  const series = [{ name: 'Orders', data: values }]
+  const series = [{ data: report?.order }]
+
+  const totalMonthlyAmount = report?.order?.reduce((acc, curr) => acc + curr, 0) ?? 0
+
   const successColor = theme.palette.primary.main
 
   const options: ApexOptions = {
@@ -89,7 +80,6 @@ const LineAreaMonthlyOrdersChart = () => {
       }
     },
     xaxis: {
-      categories: months,
       labels: { show: false },
       axisTicks: { show: false },
       axisBorder: { show: false }
@@ -108,16 +98,7 @@ const LineAreaMonthlyOrdersChart = () => {
       <CardContent className='flex flex-col pbs-0'>
         <div className='flex items-center justify-between flex-wrap gap-x-4 gap-y-0.5'>
           <Typography variant='h4' color='text.primary'>
-            {data?.currentMonthTotal?.toLocaleString() || 0}
-          </Typography>
-          <Typography
-            variant='body2'
-            color={
-              data?.percentageChange > 0 ? 'success.main' : data?.percentageChange < 0 ? 'error.main' : 'text.secondary'
-            }
-          >
-            {data?.percentageChange > 0 ? '+' : ''}
-            {data?.percentageChange ?? 0}%
+            {totalMonthlyAmount?.toLocaleString() || 0}
           </Typography>
         </div>
       </CardContent>

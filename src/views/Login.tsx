@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // Next Imports
 import Link from 'next/link'
@@ -51,6 +51,7 @@ import { toast } from 'react-toastify'
 import { signInWithPopup } from 'firebase/auth'
 import { auth, provider } from '@/utils/firebase'
 import Loader from '@/components/Loader'
+import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
 
 // Styled Custom Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -111,7 +112,8 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   const theme = useTheme()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const authBackground = useImageVariant(mode, lightImg, darkImg)
-  const [Login, { isLoading }] = useLoginMutation()
+  const [Login, { isLoading, error }] = useLoginMutation()
+  const { handleQueryError } = useQueryErrorHandler()
   const [signupWithGoogle] = useSignupWithGoogleMutation()
 
   const {
@@ -137,18 +139,19 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-    const res = await Login(data).unwrap()
+    try {
+      const apiResponse = await Login(data).unwrap()
 
-    if (res.data) {
-      if (res.data.role === 'Admin') {
-        toast.success('Login successfully')
-        router.push('/dashboard')
-        localStorage.setItem('user', JSON.stringify(res.data))
+      if (apiResponse) {
+        if (apiResponse?.role === 'Admin') {
+          toast.success('LoggedIn successfully')
+          router.push('/dashboard')
+          localStorage.setItem('user', JSON.stringify(apiResponse))
+        }
       }
-    } else {
+    } catch (error: { message: string } | string) {
       setErrorState({
-        // @ts-ignore
-        message: res?.error?.data?.message ? [res?.error?.data?.message] : ['Login failed, please try again.']
+        message: error?.message ? error.message : error ? error : ['Login failed, please try again.']
       })
     }
   }
@@ -170,7 +173,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
           }
         }
       } else {
-        toast.success('Login successfully')
+        toast.success('LoggedIn successfully')
         router.push('/dashboard')
         localStorage.setItem('user', JSON.stringify(res.data))
       }
@@ -179,6 +182,12 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       console.error(err)
     }
   }
+
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
 
   return (
     <div className='flex bs-full justify-center'>

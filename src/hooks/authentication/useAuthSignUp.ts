@@ -50,14 +50,16 @@ const useAuthSignUp = () => {
   })
 
   const onSubmit: SubmitHandler<FormData> = async (values: FormData) => {
-    const res = await register(values).unwrap()
+    const apiResponse = await register(values).unwrap()
 
-    if (res.data) {
+    if (apiResponse?.data) {
       notifySuccess('Account created successfully')
       router.push('/login')
     } else {
       setErrorState({
-        message: res?.error?.data?.message ? [res?.error?.data?.message] : ['Registeration failed, please try again.']
+        message: apiResponse?.error?.data?.message
+          ? [apiResponse?.error?.data?.message]
+          : ['Registeration failed, please try again.']
       })
     }
   }
