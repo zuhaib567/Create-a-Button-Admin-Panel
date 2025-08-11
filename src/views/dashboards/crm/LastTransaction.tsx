@@ -32,7 +32,7 @@ import tableStyles from '@core/styles/table.module.css'
 // Types
 import type { Row } from '@tanstack/react-table'
 import type { ThemeColor, SystemMode } from '@core/types'
-import type { InvoiceTypeWithAction, IStatusType } from '@/types'
+import type { InvoiceTypeWithAction, IStatusType } from '@/types/apps/invoiceTypes'
 
 type StatusColor = {
   text: string
@@ -81,7 +81,16 @@ const LastTransaction = ({ serverMode }: { serverMode: SystemMode }) => {
   const handlePrint = () => window.print()
 
   if (isLoading) {
-    return <Skeleton variant='rounded' className='w-full' height={400} />
+    return (
+      <Card className='pb-4 px-2'>
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+      </Card>
+    )
   }
 
   return (
@@ -100,7 +109,7 @@ const LastTransaction = ({ serverMode }: { serverMode: SystemMode }) => {
             </tr>
           </thead>
           <tbody>
-            {data?.orders.map(order => {
+            {data?.orders.slice(0, 10).map(order => {
               const formattedDate = new Date(order.createdAt).toLocaleDateString()
 
               return (

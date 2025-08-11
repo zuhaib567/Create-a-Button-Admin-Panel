@@ -67,12 +67,12 @@ export const orderService = createApi({
     }),
     // weekly order details
     getWeeklyOrderCount: builder.query<IGetWeeklyOrderCount, void>({
-      query: () => `/order/count?interval=week`,
+      query: () => `/order/count-weekly-order`,
       keepUnusedDataFor: 600
     }),
     // monthly order details
     getMonthlyOrderCount: builder.query<IGetMonthlyOrderCount, void>({
-      query: () => `/order/count?interval=month`,
+      query: () => `/order/count-monthly-order`,
       keepUnusedDataFor: 600
     }),
     // get All orders

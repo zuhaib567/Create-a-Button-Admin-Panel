@@ -245,7 +245,16 @@ const ProductListTable = () => {
   }, [status, data, setFilteredData])
 
   if (isLoading) {
-    return <Skeleton variant='rounded' className='w-full' height={400} />
+    return (
+      <Card className='pb-4 px-2'>
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+      </Card>
+    )
   }
 
   return (
