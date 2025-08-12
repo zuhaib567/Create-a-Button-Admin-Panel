@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation'
 
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { object, string, minLength, email, pipe, nonEmpty, InferInput } from 'valibot'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { signInWithPopup } from 'firebase/auth'
 import { auth, provider } from '@/utils/firebase'
+import { useQueryErrorHandler } from '../useQueryErrorHandler'
 
 const schema = object({
   name: pipe(string(), minLength(1, 'This field is required')),
@@ -25,11 +26,14 @@ type ErrorType = {
   message: string[]
 }
 
+type ApiError = { data: { message: string } } | { data: string }
+
 type FormData = InferInput<typeof schema>
 
 const useAuthSignUp = () => {
-  const [register, { isLoading, isError }] = useRegisterMutation()
+  const [register, { isLoading, isError, error }] = useRegisterMutation()
   const [signupWithGoogle] = useSignupWithGoogleMutation()
+  const { handleQueryError } = useQueryErrorHandler()
 
   const [errorState, setErrorState] = useState<ErrorType | null>(null)
 
@@ -50,17 +54,25 @@ const useAuthSignUp = () => {
   })
 
   const onSubmit: SubmitHandler<FormData> = async (values: FormData) => {
-    const apiResponse = await register(values).unwrap()
+    try {
+      const apiResponse = await register(values).unwrap()
 
-    if (apiResponse?.data) {
-      notifySuccess('Account created successfully')
-      router.push('/login')
-    } else {
-      setErrorState({
-        message: apiResponse?.error?.data?.message
-          ? [apiResponse?.error?.data?.message]
-          : ['Registeration failed, please try again.']
-      })
+      if (apiResponse) {
+        notifySuccess('Account created successfully')
+        router.push('/login')
+      }
+    } catch (err: any) {
+      const error: ApiError = err as ApiError
+
+      if (typeof error.data === 'string') {
+        setErrorState({
+          message: error.data ? [error.data] : ['Registeration failed, please try again.']
+        })
+      } else {
+        setErrorState({
+          message: error.data?.message ? [error.data.message] : ['Registeration failed, please try again.']
+        })
+      }
     }
   }
 
@@ -90,6 +102,12 @@ const useAuthSignUp = () => {
       console.error(err)
     }
   }
+
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
 
   return {
     errorState,

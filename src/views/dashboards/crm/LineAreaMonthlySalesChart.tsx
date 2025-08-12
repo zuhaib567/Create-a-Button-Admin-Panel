@@ -107,16 +107,7 @@ const LineAreaMonthlySalesChart = () => {
       <CardContent className='flex flex-col pbs-0'>
         <div className='flex items-center justify-between flex-wrap gap-x-4 gap-y-0.5'>
           <Typography variant='h4' color='text.primary'>
-            {data?.currentMonthTotal?.toLocaleString() || 0}
-          </Typography>
-          <Typography
-            variant='body2'
-            color={
-              data?.percentageChange > 0 ? 'success.main' : data?.percentageChange < 0 ? 'error.main' : 'text.secondary'
-            }
-          >
-            {data?.percentageChange > 0 ? '+' : ''}
-            {data?.percentageChange ?? 0}%
+            ${data?.currentMonthTotal?.toLocaleString() || 0}
           </Typography>
         </div>
       </CardContent>

@@ -216,7 +216,7 @@ const Register = ({ mode }: { mode: SystemMode }) => {
                 </>
               }
             />
-            <Button fullWidth variant='contained' type='submit'>
+            <Button fullWidth variant='contained' type='submit' disabled={isLoading}>
               <Loader loading={isLoading}>Sign Up</Loader>
             </Button>
             <div className='flex justify-center items-center flex-wrap gap-2'>

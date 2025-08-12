@@ -25,9 +25,9 @@ const DistributedBarChartOrder = () => {
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  const series = [{ data: report?.order }]
+  const series = [{ data: report?.orders }]
 
-  const totalWeeklyAmount = report?.order?.reduce((acc, curr) => acc + curr, 0)
+  const totalWeeklyAmount = report?.orders?.reduce((acc, curr) => acc + curr, 0)
 
   const actionSelectedColor = 'var(--mui-palette-action-selected)'
 

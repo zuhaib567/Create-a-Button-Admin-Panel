@@ -7,14 +7,9 @@ import Grid from '@mui/material/Grid'
 import PreviewActions from './PreviewActions'
 import PreviewCard from './PreviewCard'
 import { useGetSingleOrderQuery } from '@/redux-store/services/order'
-import { redirect } from 'next/navigation'
 
 const Preview = ({ id }: { id: string }) => {
   const { data: invoiceData } = useGetSingleOrderQuery(id)
-
-  if (!invoiceData) {
-    redirect('/not-found')
-  }
 
   // Handle Print Button Click
   const handleButtonClick = () => {

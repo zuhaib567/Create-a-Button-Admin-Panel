@@ -80,6 +80,7 @@ const MaskImg = styled('img')({
 type ErrorType = {
   message: string[]
 }
+type ApiError = { data: { message: string } } | { data: string }
 
 type FormData = InferInput<typeof schema>
 
@@ -149,10 +150,17 @@ const Login = ({ mode }: { mode: SystemMode }) => {
           localStorage.setItem('user', JSON.stringify(apiResponse))
         }
       }
-    } catch (error: { message: string } | string) {
-      setErrorState({
-        message: error?.message ? error.message : error ? error : ['Login failed, please try again.']
-      })
+    } catch (err: any) {
+      const error: ApiError = err as ApiError
+      if (typeof error.data === 'string') {
+        setErrorState({
+          message: error.data ? [error.data] : ['Login failed, please try again.']
+        })
+      } else {
+        setErrorState({
+          message: error.data?.message ? [error.data.message] : ['Login failed, please try again.']
+        })
+      }
     }
   }
 
@@ -173,7 +181,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
           }
         }
       } else {
-        toast.success('LoggedIn successfully')
+        toast.success('Successfully Authenticated with Google')
         router.push('/dashboard')
         localStorage.setItem('user', JSON.stringify(res.data))
       }
@@ -287,7 +295,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
                 Forgot password?
               </Typography>
             </div>
-            <Button fullWidth variant='contained' type='submit'>
+            <Button fullWidth variant='contained' type='submit' disabled={isLoading}>
               <Loader loading={isLoading}>Login</Loader>
             </Button>
             <div className='flex justify-center items-center flex-wrap gap-2'>

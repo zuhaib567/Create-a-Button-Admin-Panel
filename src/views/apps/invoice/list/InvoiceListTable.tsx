@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation'
 
 // MUI Imports
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import MenuItem from '@mui/material/MenuItem'
@@ -49,7 +50,7 @@ import { useGetAllOrdersQuery, useUpdateStatusMutation } from '@/redux-store/ser
 import tableStyles from '@core/styles/table.module.css'
 import DebouncedInput from '@/components/common/debounced-input'
 import { Row } from '@tanstack/react-table'
-import { Skeleton } from '@mui/material'
+import { Chip, Skeleton } from '@mui/material'
 import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
 
 declare module '@tanstack/table-core' {
@@ -105,6 +106,18 @@ interface IStatusType {
   cancel: string
 }
 
+type StatusColor = {
+  text: string
+  color: ThemeColor
+}
+
+const statusMap: Record<keyof IStatusType, StatusColor> = {
+  delivered: { text: 'Delivered', color: 'success' },
+  pending: { text: 'Pending', color: 'warning' },
+  processing: { text: 'Processing', color: 'default' },
+  cancel: { text: 'Cancelled', color: 'error' }
+}
+
 const SimpleSelectField = ({ row }: { row: Row<InvoiceTypeWithAction> }) => {
   const [updateStatus, { isLoading }] = useUpdateStatusMutation()
 
@@ -127,7 +140,7 @@ const SimpleSelectField = ({ row }: { row: Row<InvoiceTypeWithAction> }) => {
       <MenuItem value='delivered'>{isLoading ? 'Loading...' : 'Delivered'}</MenuItem>
       <MenuItem value='processing'>{isLoading ? 'Loading...' : 'Processing'}</MenuItem>
       <MenuItem value='pending'>{isLoading ? 'Loading...' : 'Pending'}</MenuItem>
-      <MenuItem value='cancel'>{isLoading ? 'Loading...' : 'Cancel'}</MenuItem>
+      <MenuItem value='cancel'>{isLoading ? 'Loading...' : 'Cancelled'}</MenuItem>
     </CustomTextField>
   )
 }
@@ -179,22 +192,15 @@ const InvoiceListTable = () => {
       columnHelper.accessor('status', {
         header: () => <div className='text-center'>Status</div>,
         cell: ({ row }) => (
-          <div className='flex items-center justify-center'>
-            <span
-              className={`text-sm ${
-                row.original.status === 'pending'
-                  ? 'text-orange-500 bg-orange-500/10'
-                  : row.original.status === 'delivered'
-                    ? 'text-green-500 bg-green-500/10'
-                    : row.original.status === 'processing'
-                      ? 'text-blue-500 bg-blue-500/10'
-                      : row.original.status === 'cancel'
-                        ? 'text-red-500 bg-red-500/10'
-                        : ''
-              } px-3 py-1 rounded-md leading-none font-medium text-end`}
-            >
-              {row.original.status}
-            </span>
+          <div>
+            {row.original.status && (
+              <Chip
+                variant='tonal'
+                size='small'
+                label={statusMap[row.original.status]?.text}
+                color={statusMap[row.original.status]?.color}
+              />
+            )}
           </div>
         )
       }),
@@ -285,6 +291,27 @@ const InvoiceListTable = () => {
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+      </Card>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Card
+        sx={{
+          borderColor: 'error.main',
+          backgroundColor: theme => theme.palette.error.light + '20'
+        }}
+        className='my-[20px] max-w-full py-[1px] px-[2px] border-l-[5px]'
+      >
+        <CardContent className='flex items-center h-[50px]'>
+          <Box>
+            <Typography variant='h6' color='error.main'>
+              Network error — Please check your internet connection.
+            </Typography>
+            <Typography variant='body2' color='text.secondary'></Typography>
+          </Box>
+        </CardContent>
       </Card>
     )
   }

@@ -136,13 +136,6 @@ const DistributedBarChartSales = () => {
           <Typography variant='h4' color='text.primary'>
             ${totalAmount.toLocaleString()}
           </Typography>
-          <Typography
-            variant='body2'
-            color={percentageChange > 0 ? 'success.main' : percentageChange < 0 ? 'error.main' : 'text.secondary'}
-          >
-            {percentageChange > 0 ? '+' : ''}
-            {percentageChange}%
-          </Typography>
         </div>
       </CardContent>
     </Card>

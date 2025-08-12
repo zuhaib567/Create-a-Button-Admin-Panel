@@ -32,7 +32,7 @@ export interface Order {
   totalAmount: number
   shippingOption: string
   paymentMethod: string
-  image: IImage
+  image?: IImage
   paymentStatus: string
   orderNote?: string
   invoice: number
@@ -104,12 +104,12 @@ export interface IUpdateStatusOrderRes {
 
 export interface IGetWeeklyOrderCount {
   success: boolean
-  order: number[]
+  orders: number[]
   message: string
 }
 
 export interface IGetMonthlyOrderCount {
   success: boolean
-  order: number[]
+  orders: number[]
   message: string
 }

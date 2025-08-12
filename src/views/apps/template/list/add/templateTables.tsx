@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -212,9 +213,28 @@ const TemplateTables = () => {
       </Card>
     )
   }
-  if (!isLoading && isError) {
-    content = <ErrorMsg msg='There was an error' />
+
+  if (isError) {
+    return (
+      <Card
+        sx={{
+          borderColor: 'error.main',
+          backgroundColor: theme => theme.palette.error.light + '20'
+        }}
+        className='my-[20px] max-w-full py-[1px] px-[2px] border-l-[5px]'
+      >
+        <CardContent className='flex items-center h-[50px]'>
+          <Box>
+            <Typography variant='h6' color='error.main'>
+              Network error — Please check your internet connection.
+            </Typography>
+            <Typography variant='body2' color='text.secondary'></Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    )
   }
+
   if (!isLoading && !isError && templates?.data.length === 0) {
     content = <ErrorMsg msg='No Template Found' />
   }

@@ -49,3 +49,10 @@ export type SingleInvoiceType = {
   invoice: InvoiceType
   paymentDetails: InvoicePaymentType
 }
+
+export interface IStatusType {
+  pending: string
+  delivered: string
+  processing: string
+  cancel: string
+}

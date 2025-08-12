@@ -7,41 +7,32 @@ export interface ApiError {
   message: string
 }
 
-export interface ErrorResponse {
-  data: ApiError
-  status: number
-}
-
-// Login
+// Login Request
 export interface LoginRequest {
   email: string
   password: string
 }
+// Login Response
 export interface LoginResponse {
-  _id: string
   token: string
+  _id: string
+  name: string
   email: string
-  role: string
+  status?: 'Active' | 'Inactive'
+  role: 'Admin' | 'Super Admin' | 'Manager' | 'CEO'
   joiningDate: string
   isGoogleSignup: boolean
 }
 
-// Register
+// Register Request
 export interface RegisterRequest {
   name: string
   email: string
   password: string
 }
+// Register Response
 export interface RegisterResponse {
-  data?: {
-    token: string
-    user: {
-      id: string
-      name: string
-      email: string
-    }
-  }
-  error?: ApiError
+  token: string
 }
 
 // Google Signup
@@ -54,7 +45,8 @@ export const authService = createApi({
   reducerPath: 'authService',
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_API_URL}/`,
-    credentials: 'include'
+    credentials: 'include',
+    timeout: 12000
   }),
   endpoints: builder => ({
     // Login
@@ -67,8 +59,7 @@ export const authService = createApi({
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled
-          console.log(data)
-          localStorage.setItem('token', JSON.stringify(data?.token))
+          localStorage.setItem('token', JSON.stringify(data.token))
         } catch (err) {
           // handle error if needed
         }
@@ -84,7 +75,7 @@ export const authService = createApi({
       }),
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
-          const data = await queryFulfilled
+          const { data } = await queryFulfilled
           localStorage.setItem('token', JSON.stringify(data.token))
         } catch (err) {
           // handle error if needed

@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -170,6 +171,27 @@ const CategoryTables = () => {
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+      </Card>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Card
+        sx={{
+          borderColor: 'error.main',
+          backgroundColor: theme => theme.palette.error.light + '20'
+        }}
+        className='my-[20px] max-w-full py-[1px] px-[2px] border-l-[5px]'
+      >
+        <CardContent className='flex items-center h-[50px]'>
+          <Box>
+            <Typography variant='h6' color='error.main'>
+              Network error — Please check your internet connection.
+            </Typography>
+            <Typography variant='body2' color='text.secondary'></Typography>
+          </Box>
+        </CardContent>
       </Card>
     )
   }

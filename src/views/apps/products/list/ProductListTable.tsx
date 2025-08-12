@@ -53,7 +53,7 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import { useGetAllProductsQuery } from '@/redux-store/services/product'
-import { Skeleton } from '@mui/material'
+import { Box, Skeleton } from '@mui/material'
 import DebouncedInput from '@/components/common/debounced-input'
 
 declare module '@tanstack/table-core' {
@@ -253,6 +253,27 @@ const ProductListTable = () => {
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
         <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+      </Card>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Card
+        sx={{
+          borderColor: 'error.main',
+          backgroundColor: theme => theme.palette.error.light + '20'
+        }}
+        className='my-[20px] max-w-full py-[1px] px-[2px] border-l-[5px]'
+      >
+        <CardContent className='flex items-center h-[50px]'>
+          <Box>
+            <Typography variant='h6' color='error.main'>
+              Network error — Please check your internet connection.
+            </Typography>
+            <Typography variant='body2' color='text.secondary'></Typography>
+          </Box>
+        </CardContent>
       </Card>
     )
   }

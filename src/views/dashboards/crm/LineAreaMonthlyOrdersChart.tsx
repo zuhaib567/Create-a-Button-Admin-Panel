@@ -23,9 +23,9 @@ const LineAreaMonthlyOrdersChart = () => {
   const theme = useTheme()
 
   // Chart series
-  const series = [{ data: report?.order }]
+  const series = [{ data: report?.orders }]
 
-  const totalMonthlyAmount = report?.order?.reduce((acc, curr) => acc + curr, 0) ?? 0
+  const totalMonthlyAmount = report?.orders?.reduce((acc, curr) => acc + curr, 0) ?? 0
 
   const successColor = theme.palette.primary.main
 

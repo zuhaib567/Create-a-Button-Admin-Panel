@@ -2,7 +2,7 @@
 import React from 'react'
 import CustomTextField from '@/@core/components/mui/TextField'
 import ErrorMsg from '@/components/common/error-msg'
-import { Button } from '@mui/material'
+import { Box, Button, Card, CardContent, Skeleton, Typography } from '@mui/material'
 import useTemplateCategorySubmit from '@/hooks/useTemplateCategorySubmit'
 import { useGetTemplateCategoryQuery } from '@/redux-store/services/templateCategory'
 
@@ -11,12 +11,38 @@ const EditTemplateCategory = ({ id }: { id: string }) => {
 
   const { errors, register, handleSubmit, handleSubmitEditCategory } = useTemplateCategorySubmit()
 
-  if (isError) {
-    return <div className='text-red-500'>Error fetching category data</div>
+  if (isLoading) {
+    return (
+      <Card className='pb-4 px-2'>
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+        <Skeleton variant='rounded' className='w-full mt-4' height={35} />
+      </Card>
+    )
   }
 
-  if (isLoading) {
-    return <div className='text-gray-500'>Loading...</div>
+  if (isError) {
+    return (
+      <Card
+        sx={{
+          borderColor: 'error.main',
+          backgroundColor: theme => theme.palette.error.light + '20'
+        }}
+        className='my-[20px] max-w-full py-[1px] px-[2px] border-l-[5px]'
+      >
+        <CardContent className='flex items-center h-[50px]'>
+          <Box>
+            <Typography variant='h6' color='error.main'>
+              Network error — Please check your internet connection.
+            </Typography>
+            <Typography variant='body2' color='text.secondary'></Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (

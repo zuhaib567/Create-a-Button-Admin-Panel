@@ -5,6 +5,7 @@ import Router from 'next/router' // ✅ for navigation
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${process.env.NEXT_PUBLIC_API_URL}/`,
+  credentials: 'include',
   timeout: 12000,
   prepareHeaders: headers => {
     const token = localStorage.getItem('token')

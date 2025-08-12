@@ -22,21 +22,22 @@ export type ProfileHeaderType = {
 }
 
 export interface IUserGoogleRes {
-  token: string;
-  _id:string;
-  name: string;
-  image?: string;
-  address?: string;
-  country?: string;
-  city?: string;
-  email: string;
-  phone?: string;
-  status?: "Active" | "Inactive";
-  password?: string;
-  role: "Admin" | "Super Admin" | "Manager" | "CEO";
-  joiningDate?: string;
-  createdAt: string;
-  updatedAt: string;
+  token: string
+  _id: string
+  name: string
+  image?: string
+  address?: string
+  country?: string
+  city?: string
+  email: string
+  phone?: string
+  status?: 'Active' | 'Inactive'
+  password?: string
+  role: 'Admin' | 'Super Admin' | 'Manager' | 'CEO'
+  joiningDate?: string
+  isGoogleSignup: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export type ProfileAvatarGroupType = {

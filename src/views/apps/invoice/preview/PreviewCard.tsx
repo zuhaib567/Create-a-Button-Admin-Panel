@@ -63,14 +63,16 @@ const PreviewCard = ({ invoiceData }: { invoiceData: Order | undefined }) => {
                 </div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <div className='flex flex-col gap-4'>
-                  <Typography className='font-medium' color='text.primary'>
-                    Product Image:
-                  </Typography>
-                  <div className='w-32 h-32 border rounded overflow-hidden'>
-                    <Image src={invoiceData?.image.url!} alt='Product Image' width={128} height={128} />
+                {invoiceData?.image && (
+                  <div className='flex flex-col gap-4'>
+                    <Typography className='font-medium' color='text.primary'>
+                      Product Image:
+                    </Typography>
+                    <div className='w-32 h-32 border rounded overflow-hidden'>
+                      <Image src={invoiceData.image.url!} alt='Product Image' width={128} height={128} />
+                    </div>
                   </div>
-                </div>
+                )}
               </Grid>
             </Grid>
           </Grid>

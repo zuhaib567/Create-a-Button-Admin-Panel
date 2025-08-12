@@ -8,29 +8,24 @@ import CustomTextField from '@/@core/components/mui/TextField'
 
 // prop type
 type IPropType = {
-  setCategory: React.Dispatch<SetStateAction<{ name: string; id: string }>>
-  setParent: React.Dispatch<SetStateAction<string>>
-  setChildren: React.Dispatch<SetStateAction<string>>
+  setCategory: React.Dispatch<SetStateAction<{ id: string; name: string }>>
   default_value?: {
-    parent: string
     id: string
-    children: string
+    name: string
   }
 }
 
-export default function ProductCategory({ setCategory, setParent, setChildren, default_value }: IPropType) {
+export default function ProductCategory({ setCategory, default_value }: IPropType) {
   const [open, setOpen] = React.useState<string>('')
-  const { data: categories, isError, isLoading } = useGetAllCategoriesQuery()
-  const [selectedCategory, setSelectedCategory] = useState<string[]>(
-    default_value ? [default_value.parent, default_value.children] : []
-  )
+  const { data: categories, isLoading, isError } = useGetAllCategoriesQuery()
+  const [selectedCategory, setSelectedCategory] = useState<{
+    id: string
+    name: string
+  } | null>(default_value || null)
 
   useEffect(() => {
-    if (default_value?.parent && default_value.id && default_value.children) {
-      const { id, parent, children } = default_value
-      setCategory({ id: id, name: parent })
-      setParent(parent)
-      setChildren(children)
+    if (default_value?.id && default_value?.name) {
+      setCategory(default_value)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -40,22 +35,7 @@ export default function ProductCategory({ setCategory, setParent, setChildren, d
     setOpen(open === value ? '' : value)
     if (value && title) {
       setCategory({ id: value, name: title })
-      setParent(title)
-    }
-    if (title) {
-      if (selectedCategory.includes(title)) {
-        setSelectedCategory(title)
-      }
-    }
-  }
-
-  // handle sub category
-  const handleSubCategory = (subCate: string) => {
-    setChildren(subCate)
-    if (selectedCategory.includes(subCate)) {
-      setSelectedCategory(selectedCategory.filter(c => c !== subCate))
-    } else {
-      setSelectedCategory([...selectedCategory, subCate])
+      setSelectedCategory({ id: value, name: title })
     }
   }
 
@@ -81,12 +61,16 @@ export default function ProductCategory({ setCategory, setParent, setChildren, d
           <div className='flex items-center gap-2 is-full sm:is-auto'>
             <CustomTextField
               select
-              value={selectedCategory[0]}
-              onChange={e => handleCategory(e.target.value, "")}
+              value={selectedCategory?.id}
+              onChange={e => {
+                const selectedId = e.target.value
+                const selectedItem = categoryItems.find(item => item._id === selectedId)
+                handleCategory(selectedId, selectedItem?.name || '')
+              }}
               className='w-full'
             >
               {categoryItems.map(item => (
-                <MenuItem value={item._id}>{item.parent}</MenuItem>
+                <MenuItem value={item._id}>{item.name}</MenuItem>
               ))}
             </CustomTextField>
           </div>
@@ -97,15 +81,7 @@ export default function ProductCategory({ setCategory, setParent, setChildren, d
 
   return (
     <div>
-      <div className='flex flex-wrap gap-2 mb-3'>
-        {selectedCategory.map((c, i) => (
-          <span key={i} className='flex items-center gap-x-1 bg-primary text-xs text-white px-3 py-1 rounded-full'>
-            {c}
-            <b onClick={() => handleCategory('', c)}>×</b>
-          </span>
-        ))}
-      </div>
-        <div>{content}</div>
+      <div>{content}</div>
     </div>
   )
 }
