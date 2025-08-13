@@ -5,7 +5,6 @@ import { configureStore } from '@reduxjs/toolkit'
 import { chatSlice } from '@/redux-store/slices/chat'
 import { emailSlice } from '@/redux-store/slices/email'
 import { kanbanSlice } from '@/redux-store/slices/kanban'
-import { calendarSlice } from '@/redux-store/slices/calendar'
 
 // Api Imports
 import { authService } from './services/auth'
@@ -22,7 +21,6 @@ export const store = configureStore({
     [chatSlice.name]: chatSlice.reducer,
     [emailSlice.name]: chatSlice.reducer,
     [kanbanSlice.name]: chatSlice.reducer,
-    [calendarSlice.name]: chatSlice.reducer,
 
     [authService.reducerPath]: authService.reducer,
     [orderService.reducerPath]: orderService.reducer,

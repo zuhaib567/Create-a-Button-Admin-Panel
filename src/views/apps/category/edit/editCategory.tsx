@@ -8,6 +8,7 @@ import { useGetCategoryQuery } from '@/redux-store/services/category'
 import CustomTextField from '@/@core/components/mui/TextField'
 import ErrorMsg from '@/components/common/error-msg'
 import { Box, Button, Card, CardContent, Skeleton, Typography } from '@mui/material'
+import Loader from '@/components/Loader'
 
 const EditCategory = ({ id }: { id: string }) => {
   const { data: categoryData, isError, isLoading } = useGetCategoryQuery(id)
@@ -15,15 +16,16 @@ const EditCategory = ({ id }: { id: string }) => {
   const {
     errors,
     control,
-    categoryChildren,
-    setCategoryChildren,
+    // categoryChildren,
+    // setCategoryChildren,
     register,
     handleSubmit,
-    setCategoryImg,
-    categoryImg,
-    error,
+    // setCategoryImg,
+    // categoryImg,
+    // error,
     isSubmitted,
-    handleSubmitEditCategory
+    handleSubmitEditCategory,
+    editCategoryLoading
   } = useCategorySubmit()
 
   if (isLoading) {
@@ -64,36 +66,36 @@ const EditCategory = ({ id }: { id: string }) => {
     <div className='max-w-md mx-auto'>
       <form onSubmit={handleSubmit(values => handleSubmitEditCategory(values, id))}>
         <div className='mb-6 bg-backgroundPaper px-6 py-8 rounded-md'>
-          <CategoryImgUpload
+          {/* <CategoryImgUpload
             isSubmitted={isSubmitted}
             setImage={setCategoryImg}
             default_img={categoryData?.img}
             image={categoryImg}
-          />
+          /> */}
 
           <div className='mb-6'>
-            <p className='mb-0 text-base'>Parent</p>
+            <p className='mb-0 text-base'>Product Category Name</p>
             <CustomTextField
-              {...register('parent', {
-                required: `Parent is required!`
+              {...register('name', {
+                required: `Category name is required!`
               })}
               className='input w-full h-[44px] rounded-md border border-gray6 text-base mt-3'
               type='text'
-              name='parent'
-              placeholder='Name'
-              defaultValue={categoryData?.parent}
+              name='name'
+              placeholder='Enter category name'
+              defaultValue={categoryData?.name}
             />
-            <ErrorMsg msg={(errors?.parent?.message as string) || ''} />
+            <ErrorMsg msg={(errors?.name?.message as string) || ''} />
           </div>
 
-          <CategoryChildren
+          {/* <CategoryChildren
             categoryChildren={categoryChildren}
             setCategoryChildren={setCategoryChildren}
             error={error}
             default_value={categoryData?.children}
-          />
+          /> */}
 
-          <div className='mb-6'>
+          {/* <div className='mb-6'>
             <p className='mb-0 text-base'>Description</p>
             <CustomTextField
               {...register('description', {
@@ -107,10 +109,10 @@ const EditCategory = ({ id }: { id: string }) => {
               placeholder='Description Here'
               defaultValue={categoryData?.description}
             />
-          </div>
+          </div> */}
 
           <Button type='submit' variant='contained' className='w-full'>
-            Edit Category
+            <Loader loading={editCategoryLoading}>Edit Product Category</Loader>
           </Button>
         </div>
       </form>

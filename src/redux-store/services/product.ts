@@ -1,75 +1,76 @@
-import { IAddProduct, ProductResponse } from '@/types/pages/productTypes'
+import { IAddProduct, IProductDeleteRes, ProductResponse } from '@/types/apps/productTypes';
 
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import Router from 'next/router' // ✅ for navigation
-
-const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.NEXT_PUBLIC_API_URL}/`,
-  credentials: 'include',
-  timeout: 12000,
-  prepareHeaders: headers => {
-    const token = localStorage.getItem('token')
-    if (!!token) {
-      headers.set('Authorization', `Bearer ${JSON.parse(token)}`)
-    }
-    return headers
-  }
-})
-
-// ✅ Wrapper for handling expired token
-const baseQueryWithAuthRedirect: typeof baseQuery = async (args, api, extraOptions) => {
-  const result = await baseQuery(args, api, extraOptions)
-  if (result.error && result.error.status === 401) {
-    localStorage.removeItem('token')
-    Router.replace('/login')
-  }
-  return result
-}
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuthRedirect } from '@/utils/baseQuery';
 
 interface IProductResponse {
-  success: boolean
-  status: string
-  message: string
-  data: any
+  success: boolean;
+  status: string;
+  message: string;
+  data: any;
 }
 
 interface IProductEditResponse {
-  data: IAddProduct
-  message: string
+  data: IAddProduct;
+  message: string;
 }
 
 export const productService = createApi({
   reducerPath: 'productService',
   baseQuery: baseQueryWithAuthRedirect,
+  // ✅ Declare tag types used in providesTags/invalidatesTags
+  tagTypes: ['AllProduct', 'getProduct'],
   endpoints: builder => ({
+    // Get all products
     getAllProducts: builder.query<ProductResponse, void>({
-      query: () => `/products/all`
+      query: () => `/products/all`,
+      providesTags: ['AllProduct'],
+      keepUnusedDataFor: 600
     }),
-    // add product
+    // Add product
     addProduct: builder.mutation<IProductResponse, IAddProduct>({
       query(data: IAddProduct) {
         return {
           url: `/products/add`,
           method: 'POST',
           body: data
-        }
-      }
+        };
+      },
+      invalidatesTags: ['AllProduct', 'getProduct']
     }),
-    // edit product
+    // Delete product
+    deleteProduct: builder.mutation<IProductDeleteRes, string>({
+      query(id: string) {
+        return {
+          url: `/products/${id}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: ['AllProduct', 'getProduct']
+    }),
+    // Edit product
     editProduct: builder.mutation<IProductEditResponse, { id: string; data: Partial<IAddProduct> }>({
       query({ id, data }) {
         return {
           url: `/products/edit-product/${id}`,
           method: 'PATCH',
           body: data
-        }
-      }
+        };
+      },
+      invalidatesTags: ['AllProduct', 'getProduct']
     }),
-    // get single product
+    // Get single product
     getProduct: builder.query<IAddProduct, string>({
-      query: id => `/products/${id}`
+      query: id => `/products/${id}`,
+      providesTags: ['getProduct']
     })
   })
-})
+});
 
-export const { useGetAllProductsQuery, useAddProductMutation, useEditProductMutation } = productService
+export const {
+  useGetAllProductsQuery,
+  useAddProductMutation,
+  useDeleteProductMutation,
+  useEditProductMutation,
+  useGetProductQuery
+} = productService;

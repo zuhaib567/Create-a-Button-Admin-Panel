@@ -1,21 +1,21 @@
 // MUI Imports
-import Grid from '@mui/material/Grid'
+import Grid from '@mui/material/Grid';
 
 // Component Imports
-import DistributedBarChartOrder from '@views/dashboards/crm/DistributedBarChartOrder'
-import EarningReportsWithTabs from '@views/dashboards/crm/EarningReportsWithTabs'
-import LastTransaction from '@views/dashboards/crm/LastTransaction'
-import RadarSalesChart from '@views/dashboards/crm/RadarSalesChart'
+import DistributedBarChartOrder from '@views/dashboards/crm/DistributedBarChartOrder';
+import EarningReportsWithTabs from '@views/dashboards/crm/EarningReportsWithTabs';
+import LastTransaction from '@views/dashboards/crm/LastTransaction';
+import RadarSalesChart from '@views/dashboards/crm/RadarSalesChart';
 
 // Server Action Imports
-import DistributedBarChartSales from '@/views/dashboards/crm/DistributedBarChartSales'
-import LineAreaMonthlyOrdersChart from '@/views/dashboards/crm/LineAreaMonthlyOrdersChart'
-import LineAreaMonthlySalesChart from '@/views/dashboards/crm/LineAreaMonthlySalesChart'
-import { getServerMode } from '@core/utils/serverHelpers'
+import DistributedBarChartSales from '@/views/dashboards/crm/DistributedBarChartSales';
+import LineAreaMonthlyOrdersChart from '@/views/dashboards/crm/LineAreaMonthlyOrdersChart';
+import LineAreaMonthlySalesChart from '@/views/dashboards/crm/LineAreaMonthlySalesChart';
+import { getServerMode } from '@core/utils/serverHelpers';
 
 const DashboardCRM = () => {
   // Vars
-  const serverMode = getServerMode()
+  const serverMode = getServerMode();
 
   return (
     <Grid container spacing={6}>
@@ -31,9 +31,6 @@ const DashboardCRM = () => {
       <Grid item xs={12} sm={6} md={3}>
         <LineAreaMonthlySalesChart />
       </Grid>
-      {/* <Grid item xs={12} md={8} lg={4}>
-        <BarChartRevenueGrowth />
-      </Grid> */}
       <Grid item xs={12} lg={8}>
         <EarningReportsWithTabs />
       </Grid>
@@ -44,7 +41,7 @@ const DashboardCRM = () => {
         <LastTransaction serverMode={serverMode} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default DashboardCRM
+export default DashboardCRM;

@@ -1,41 +1,33 @@
-'use client'
+'use client';
 
 // Next Imports
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-import CardHeader from '@mui/material/CardHeader'
-import { useTheme } from '@mui/material/styles'
-import { Skeleton } from '@mui/material'
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import { useTheme } from '@mui/material/styles';
+import { Skeleton } from '@mui/material';
 
 // Third-party Imports
-import type { ApexOptions } from 'apexcharts'
-import { useGetSalesReportMonthlyQuery } from '@/redux-store/services/order'
+import type { ApexOptions } from 'apexcharts';
+import { useGetSalesReportMonthlyQuery } from '@/redux-store/services/order';
 
 // Styled Component Imports
-const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'), { ssr: false })
+const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'), { ssr: false });
 
 const LineAreaMonthlySalesChart = () => {
-  const { data, isLoading } = useGetSalesReportMonthlyQuery()
-  const theme = useTheme()
+  const { data: report, isLoading } = useGetSalesReportMonthlyQuery();
+  const theme = useTheme();
 
-  const report = data?.report || []
+  // Chart series
+  const series = [{ data: report?.totalSales }];
 
-  // Sort in chronological order
-  const sortedReport = [...report].sort((a, b) => {
-    if (a.year === b.year) return a.monthNumber - b.monthNumber
-    return a.year - b.year
-  })
+  const totalMonthlyAmount = report?.totalSales?.reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-  // Extract months and values
-  const months = sortedReport.map(entry => entry.month)
-  const values = sortedReport.map(entry => Number(entry.count || 0))
-
-  const series = [{ name: 'Sales', data: values }]
-  const successColor = theme.palette.success.main
+  const successColor = theme.palette.success.main;
 
   const options: ApexOptions = {
     chart: {
@@ -88,16 +80,15 @@ const LineAreaMonthlySalesChart = () => {
       }
     },
     xaxis: {
-      categories: months,
       labels: { show: false },
       axisTicks: { show: false },
       axisBorder: { show: false }
     },
     yaxis: { show: false }
-  }
+  };
 
   if (isLoading) {
-    return <Skeleton variant='rounded' className='w-full' height={138} />
+    return <Skeleton variant='rounded' className='w-full' height={138} />;
   }
 
   return (
@@ -107,12 +98,12 @@ const LineAreaMonthlySalesChart = () => {
       <CardContent className='flex flex-col pbs-0'>
         <div className='flex items-center justify-between flex-wrap gap-x-4 gap-y-0.5'>
           <Typography variant='h4' color='text.primary'>
-            ${data?.currentMonthTotal?.toLocaleString() || 0}
+            ${totalMonthlyAmount?.toLocaleString() || 0}
           </Typography>
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default LineAreaMonthlySalesChart
+export default LineAreaMonthlySalesChart;

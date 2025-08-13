@@ -5,11 +5,13 @@ import ErrorMsg from '@/components/common/error-msg'
 import { Box, Button, Card, CardContent, Skeleton, Typography } from '@mui/material'
 import useTemplateCategorySubmit from '@/hooks/useTemplateCategorySubmit'
 import { useGetTemplateCategoryQuery } from '@/redux-store/services/templateCategory'
+import Loader from '@/components/Loader'
 
 const EditTemplateCategory = ({ id }: { id: string }) => {
   const { data: categoryData, isError, isLoading } = useGetTemplateCategoryQuery(id)
 
-  const { errors, register, handleSubmit, handleSubmitEditCategory } = useTemplateCategorySubmit()
+  const { errors, register, handleSubmit, handleSubmitEditCategory, editTemplateCategoryLoading } =
+    useTemplateCategorySubmit()
 
   if (isLoading) {
     return (
@@ -50,10 +52,10 @@ const EditTemplateCategory = ({ id }: { id: string }) => {
       <form onSubmit={handleSubmit(values => handleSubmitEditCategory(values, id))}>
         <div className='mb-6 bg-backgroundPaper px-6 py-8 rounded-md'>
           <div className='mb-6'>
-            <p className='mb-0 text-base'>Category Name</p>
+            <p className='mb-0 text-base'>Template Category Name</p>
             <CustomTextField
               {...register('name', {
-                required: `Name is required!`
+                required: `Category name is required!`
               })}
               className='input w-full h-[44px] rounded-md border border-gray6 text-base mt-3'
               type='text'
@@ -61,10 +63,10 @@ const EditTemplateCategory = ({ id }: { id: string }) => {
               placeholder='Enter category name'
               defaultValue={categoryData?.result?.name}
             />
-            <ErrorMsg msg={(errors?.parent?.message as string) || ''} />
+            <ErrorMsg msg={(errors?.name?.message as string) || ''} />
           </div>
 
-          <div className='mb-6'>
+          {/* <div className='mb-6'>
             <p className='mb-0 text-base'>Description</p>
             <CustomTextField
               {...register('description', {
@@ -78,10 +80,10 @@ const EditTemplateCategory = ({ id }: { id: string }) => {
               placeholder='Description Here'
               defaultValue={categoryData?.result?.description}
             />
-          </div>
+          </div> */}
 
           <Button type='submit' variant='contained' className='w-full'>
-            Edit Template Category
+            <Loader loading={editTemplateCategoryLoading}>Edit Template Category</Loader>
           </Button>
         </div>
       </form>

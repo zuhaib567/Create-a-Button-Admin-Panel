@@ -6,6 +6,6 @@ export const i18n = {
     fr: 'ltr',
     ar: 'rtl'
   }
-} as const
+} as const;
 
-export type Locale = (typeof i18n)['locales'][number]
+export type Locale = (typeof i18n)['locales'][number];

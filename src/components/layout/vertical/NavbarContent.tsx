@@ -1,21 +1,21 @@
 // Third-party Imports
-import classnames from 'classnames'
+import classnames from 'classnames';
 
 // Type Imports
-import type { ShortcutsType } from '@components/layout/shared/ShortcutsDropdown'
-import type { NotificationsType } from '@components/layout/shared/NotificationsDropdown'
+import type { ShortcutsType } from '@components/layout/shared/ShortcutsDropdown';
+import type { NotificationsType } from '@components/layout/shared/NotificationsDropdown';
 
 // Component Imports
-import NavToggle from './NavToggle'
-import NavSearch from '@components/layout/shared/search'
-import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
-import ModeDropdown from '@components/layout/shared/ModeDropdown'
-import ShortcutsDropdown from '@components/layout/shared/ShortcutsDropdown'
-import NotificationsDropdown from '@components/layout/shared/NotificationsDropdown'
-import UserDropdown from '@components/layout/shared/UserDropdown'
+import NavToggle from './NavToggle';
+import NavSearch from '@components/layout/shared/search';
+import LanguageDropdown from '@components/layout/shared/LanguageDropdown';
+import ModeDropdown from '@components/layout/shared/ModeDropdown';
+import ShortcutsDropdown from '@components/layout/shared/ShortcutsDropdown';
+import NotificationsDropdown from '@components/layout/shared/NotificationsDropdown';
+import UserDropdown from '@components/layout/shared/UserDropdown';
 
 // Util Imports
-import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
+import { verticalLayoutClasses } from '@layouts/utils/layoutClasses';
 
 // Vars
 const shortcuts: ShortcutsType[] = [
@@ -55,7 +55,7 @@ const shortcuts: ShortcutsType[] = [
     title: 'Settings',
     subtitle: 'Account Settings'
   }
-]
+];
 
 const notifications: NotificationsType[] = [
   {
@@ -103,7 +103,7 @@ const notifications: NotificationsType[] = [
     time: 'Jan 6, 1:48 PM',
     read: true
   }
-]
+];
 
 const NavbarContent = () => {
   return (
@@ -116,11 +116,11 @@ const NavbarContent = () => {
         {/* <LanguageDropdown /> */}
         <ModeDropdown />
         {/* <ShortcutsDropdown shortcuts={shortcuts} /> */}
-        <NotificationsDropdown notifications={notifications} />
+        {/* <NotificationsDropdown notifications={notifications} /> */}
         <UserDropdown />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NavbarContent
+export default NavbarContent;

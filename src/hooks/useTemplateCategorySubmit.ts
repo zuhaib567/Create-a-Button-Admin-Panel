@@ -9,14 +9,14 @@ import { useParams, useRouter } from 'next/navigation'
 
 const useTemplateCategorySubmit = () => {
   const [name, setName] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
+  // const [description, setDescription] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
   const router = useRouter()
   // add
-  const [addTemplateCategory, {}] = useAddTemplateCategoryMutation()
+  const [addTemplateCategory, { isLoading: addTemplateCategoryLoading }] = useAddTemplateCategoryMutation()
   // edit
-  const [editTemplateCategory, {}] = useEditTemplateCategoryMutation()
+  const [editTemplateCategory, { isLoading: editTemplateCategoryLoading }] = useEditTemplateCategoryMutation()
 
   // react hook form
   const {
@@ -34,16 +34,17 @@ const useTemplateCategorySubmit = () => {
   const handleSubmitCategory = async (data: any) => {
     try {
       const template_category_data = {
-        name: data.name,
-        description: data.description
+        name: data.name
+        // description: data.description
       }
-      if (data.name.trim() === '') {
+
+      if (template_category_data.name.trim() === '') {
         notifyError('Name is required')
         return
-      } else if (data.description.trim() === '') {
-        notifyError('Description is required')
-        return
-      }
+      } // else if (data.description.trim() === '') {
+      //   notifyError('Description is required')
+      //   return
+      // }
 
       const res = await addTemplateCategory(template_category_data)
       if ('error' in res) {
@@ -70,8 +71,8 @@ const useTemplateCategorySubmit = () => {
   const handleSubmitEditCategory = async (data: any, id: string) => {
     try {
       const category_data = {
-        name: data.name,
-        description: data.description
+        name: data.name
+        // description: data.description
       }
 
       const res = await editTemplateCategory({ id, data: category_data })
@@ -105,12 +106,14 @@ const useTemplateCategorySubmit = () => {
     control,
     name,
     setName,
-    description,
-    setDescription,
+    // description,
+    // setDescription,
     handleSubmitCategory,
+    addTemplateCategoryLoading,
     error,
     isSubmitted,
-    handleSubmitEditCategory
+    handleSubmitEditCategory,
+    editTemplateCategoryLoading
   }
 }
 

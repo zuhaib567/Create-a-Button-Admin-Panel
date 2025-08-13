@@ -1,4 +1,4 @@
-import type { KanbanType } from '@/types/apps/kanbanTypes'
+import type { KanbanType } from '@/types/apps/kanbanTypes';
 
 export const db: KanbanType = {
   columns: [
@@ -94,4 +94,4 @@ export const db: KanbanType = {
       dueDate: new Date(new Date().getFullYear(), 11, 5)
     }
   ]
-}
+};

@@ -48,11 +48,12 @@ import type { ITemplateItem, TemplateRes } from '@/types/apps/templateTypes'
 
 import { useDeleteTemplateMutation, useGetAllTemplatesQuery } from '@/redux-store/services/template'
 import { useParams } from 'next/navigation'
+import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
 
 const TemplateTables = () => {
-  const { data: templates, isError, isLoading } = useGetAllTemplatesQuery()
-
+  const { data: templates, isLoading, isError, error } = useGetAllTemplatesQuery()
   const [deleteTemplate, {}] = useDeleteTemplateMutation()
+  const { handleQueryError } = useQueryErrorHandler()
 
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [data, setData] = useState<ITemplateItem[]>([])
@@ -184,6 +185,12 @@ const TemplateTables = () => {
     onGlobalFilterChange: setGlobalFilter
   })
 
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
+
   const {
     errors,
     register,
@@ -194,7 +201,7 @@ const TemplateTables = () => {
     isSubmitted,
     tags,
     setTags,
-    error,
+    error: validationError,
     setTemplateJson,
     templateJson
   } = useTemplateSubmit()
@@ -358,7 +365,7 @@ const TemplateTables = () => {
                   <TemplateJsonFile isSubmitted={isSubmitted} setJson={setTemplateJson} image={templateJson} />
                   <TemplateCategoryList register={register} />
 
-                  <TemplateTags register={register} tags={tags} setTags={setTags} error={error} />
+                  <TemplateTags register={register} tags={tags} setTags={setTags} error={validationError} />
 
                   <Button type='submit' variant='contained' className='w-full'>
                     Add Template

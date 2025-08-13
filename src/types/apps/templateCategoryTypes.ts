@@ -1,8 +1,7 @@
-
 export interface ICategoryItem {
   _id: string;
   name: string;
-  description: string;
+  // description: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,14 +13,14 @@ export interface CategoryResponse {
 
 export interface IAddCategory {
   name: string;
-  description: string;
+  // description: string;
 }
 
 export interface CategoryRes {
   result: any;
   _id: string;
   name: string;
-  description: string;
+  // description: string;
   createdAt: string;
   updatedAt: string;
 }

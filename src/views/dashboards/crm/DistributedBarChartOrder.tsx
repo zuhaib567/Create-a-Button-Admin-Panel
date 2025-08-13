@@ -25,9 +25,9 @@ const DistributedBarChartOrder = () => {
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  const series = [{ data: report?.orders }]
+  const series = [{ data: report?.orders || [] }]
 
-  const totalWeeklyAmount = report?.orders?.reduce((acc, curr) => acc + curr, 0)
+  const totalWeeklyOrders = report?.orders?.reduce((acc, curr) => acc + curr, 0) ?? 0
 
   const actionSelectedColor = 'var(--mui-palette-action-selected)'
 
@@ -121,7 +121,7 @@ const DistributedBarChartOrder = () => {
         <AppReactApexCharts type='bar' height={84} width='100%' options={options} series={series} />
         <div className='flex items-center justify-between flex-wrap gap-x-4 gap-y-0.5'>
           <Typography variant='h4' color='text.primary'>
-            {totalWeeklyAmount?.toLocaleString() || 0}
+            {totalWeeklyOrders?.toLocaleString() || 0}
           </Typography>
         </div>
       </CardContent>

@@ -1,4 +1,3 @@
-
 export interface ITemplateItem {
   _id: string;
   img: string;
@@ -52,5 +51,3 @@ export interface ITemplateDeleteRes {
   success?: boolean;
   message?: string;
 }
-
-

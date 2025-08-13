@@ -1,5 +1,5 @@
 // Type Imports
-import type { EmailType } from '@/types/apps/emailTypes'
+import type { EmailType } from '@/types/apps/emailTypes';
 
 export const db: EmailType = {
   emails: [
@@ -1044,4 +1044,4 @@ export const db: EmailType = {
       isRead: true
     }
   ]
-}
+};

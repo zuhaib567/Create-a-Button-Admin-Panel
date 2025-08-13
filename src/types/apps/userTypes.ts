@@ -1,21 +1,21 @@
 // Type Imports
-import type { ThemeColor } from '@core/types'
+import type { ThemeColor } from '@core/types';
 
 export type UsersType = {
-  id: number
-  role: string
-  email: string
-  status: string
-  avatar: string
-  company: string
-  country: string
-  contact: string
-  fullName: string
-  username: string
-  currentPlan: string
-  avatarColor?: ThemeColor
-  billing: string
-}
+  id: number;
+  role: string;
+  email: string;
+  status: string;
+  avatar: string;
+  company: string;
+  country: string;
+  contact: string;
+  fullName: string;
+  username: string;
+  currentPlan: string;
+  avatarColor?: ThemeColor;
+  billing: string;
+};
 
 export interface IAdminUpdate {
   name?: string;
@@ -28,7 +28,7 @@ export interface IAdminUpdate {
 
 export interface IAdminUpdateRes {
   token: string;
-   _id:string;
+  _id: string;
   name: string;
   image?: string;
   address?: string;
@@ -36,8 +36,8 @@ export interface IAdminUpdateRes {
   city?: string;
   email: string;
   phone?: string;
-  status?: "Active" | "Inactive";
+  status?: 'Active' | 'Inactive';
   password?: string;
-  role: "Admin" | "Super Admin" | "Manager" | "CEO";
+  role: 'Admin' | 'Super Admin' | 'Manager' | 'CEO';
   joiningDate?: string;
 }

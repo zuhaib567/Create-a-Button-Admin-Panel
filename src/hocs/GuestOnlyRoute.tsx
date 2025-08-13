@@ -28,10 +28,12 @@ const GuestOnlyRoute = ({ children, lang }: ChildrenType & { lang: Locale }) => 
     }
   }, []);
 
-  return <>
-  <ToastContainer />
-  {children}
-  </>;
+  return (
+    <>
+      <ToastContainer />
+      {children}
+    </>
+  );
 };
 
 export default GuestOnlyRoute;

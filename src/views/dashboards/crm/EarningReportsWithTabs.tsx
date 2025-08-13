@@ -1,45 +1,45 @@
-'use client'
+'use client';
 
 // React Imports
-import { useState } from 'react'
-import type { SyntheticEvent } from 'react'
+import { useState } from 'react';
+import type { SyntheticEvent } from 'react';
 
 // Next Imports
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
-import Tab from '@mui/material/Tab'
-import TabList from '@mui/lab/TabList'
-import TabPanel from '@mui/lab/TabPanel'
-import TabContext from '@mui/lab/TabContext'
-import Typography from '@mui/material/Typography'
-import { useTheme } from '@mui/material/styles'
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import Tab from '@mui/material/Tab';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import TabContext from '@mui/lab/TabContext';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 
 // Third Party Imports
-import classnames from 'classnames'
-import type { ApexOptions } from 'apexcharts'
+import classnames from 'classnames';
+import type { ApexOptions } from 'apexcharts';
 
 // Components Imports
-import OptionMenu from '@core/components/option-menu'
-import CustomAvatar from '@core/components/mui/Avatar'
+import OptionMenu from '@core/components/option-menu';
+import CustomAvatar from '@core/components/mui/Avatar';
 
-import { useGetRecentOrdersQuery } from '@/redux-store/services/order'
-import { Skeleton } from '@mui/material'
+import { useGetRecentOrdersQuery } from '@/redux-store/services/order';
+import { Skeleton } from '@mui/material';
 
-const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
+const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'));
 
-type ApexChartSeries = NonNullable<ApexOptions['series']>
-type ApexChartSeriesData = Exclude<ApexChartSeries[0], number>
-type TabCategory = 'orders' | 'sales'
+type ApexChartSeries = NonNullable<ApexOptions['series']>;
+type ApexChartSeriesData = Exclude<ApexChartSeries[0], number>;
+type TabCategory = 'orders' | 'sales';
 
 type TabType = {
-  type: TabCategory
-  avatarIcon: string
-  series: ApexChartSeries
-}
+  type: TabCategory;
+  avatarIcon: string;
+  series: ApexChartSeries;
+};
 
 const renderTabs = (value: TabCategory, tabData: TabType[]) => {
   return tabData.map(item => (
@@ -63,8 +63,8 @@ const renderTabs = (value: TabCategory, tabData: TabType[]) => {
         </div>
       }
     />
-  ))
-}
+  ));
+};
 
 const renderTabPanels = (
   value: TabCategory,
@@ -74,10 +74,10 @@ const renderTabPanels = (
   tabData: TabType[]
 ) => {
   return tabData.map(item => {
-    const dataPoints = (item.series[0] as ApexChartSeriesData).data as number[]
-    const max = Math.max(...dataPoints)
-    const seriesIndex = dataPoints.indexOf(max)
-    const finalColors = colors.map((color, i) => (seriesIndex === i ? 'var(--mui-palette-primary-main)' : color))
+    const dataPoints = (item.series[0] as ApexChartSeriesData).data as number[];
+    const max = Math.max(...dataPoints);
+    const seriesIndex = dataPoints.indexOf(max);
+    const finalColors = colors.map((color, i) => (seriesIndex === i ? 'var(--mui-palette-primary-main)' : color));
 
     return (
       <TabPanel key={item.type} value={item.type} className='!p-0'>
@@ -89,33 +89,34 @@ const renderTabPanels = (
           series={item.series}
         />
       </TabPanel>
-    )
-  })
-}
+    );
+  });
+};
 
 const EarningReportsWithTabs = () => {
-  const { data: ordersData, isLoading } = useGetRecentOrdersQuery()
-  const orders = ordersData?.orders || []
+  const { data: ordersData, isLoading } = useGetRecentOrdersQuery();
+  const orders = ordersData?.orders || [];
 
-  const monthlyCounts = Array(12).fill(0)
-  const monthlyAmounts = Array(12).fill(0)
+  const monthlyCounts = Array(12).fill(0);
+  const monthlyAmounts = Array(12).fill(0);
 
   orders.forEach(order => {
-    const date = new Date(order.createdAt)
-    const monthIndex = date.getMonth()
-    monthlyCounts[monthIndex] += 1
-    monthlyAmounts[monthIndex] += Number(order.totalAmount)
-  })
+    const date = new Date(order.createdAt);
+    const monthIndex = date.getMonth();
 
-  const [value, setValue] = useState<TabCategory>('orders')
-  const theme = useTheme()
-  const disabledText = 'var(--mui-palette-text-disabled)'
+    monthlyCounts[monthIndex] += 1;
+    monthlyAmounts[monthIndex] += Number(order.totalAmount);
+  });
+
+  const [value, setValue] = useState<TabCategory>('orders');
+  const theme = useTheme();
+  const disabledText = 'var(--mui-palette-text-disabled)';
 
   const handleChange = (event: SyntheticEvent, newValue: TabCategory) => {
-    setValue(newValue)
-  }
+    setValue(newValue);
+  };
 
-  const colors = Array(9).fill('var(--mui-palette-primary-lightOpacity)')
+  const colors = Array(9).fill('var(--mui-palette-primary-lightOpacity)');
 
   const options: ApexOptions = {
     chart: { parentHeightOffset: 0, toolbar: { show: false } },
@@ -132,7 +133,7 @@ const EarningReportsWithTabs = () => {
     tooltip: { enabled: false },
     dataLabels: {
       offsetY: -11,
-      formatter: val => `${val}`,
+      formatter: val => (value === 'sales' ? `$${val}` : `${val}`),
       style: {
         fontWeight: 500,
         colors: ['var(--mui-palette-text-primary)'],
@@ -188,7 +189,7 @@ const EarningReportsWithTabs = () => {
         options: { plotOptions: { bar: { columnWidth: '70%' } } }
       }
     ]
-  }
+  };
 
   const tabData: TabType[] = [
     {
@@ -201,12 +202,13 @@ const EarningReportsWithTabs = () => {
       avatarIcon: 'tabler-chart-bar',
       series: [{ data: monthlyAmounts.slice(0, 9) }]
     }
-  ]
+  ];
 
   if (isLoading) {
-    return <Skeleton variant='rounded' className='size-full' />
+    return <Skeleton variant='rounded' className='size-full' />;
   }
 
+  console.log(monthlyCounts.slice(0, 9));
   return (
     <Card>
       <CardHeader
@@ -230,7 +232,7 @@ const EarningReportsWithTabs = () => {
         </TabContext>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default EarningReportsWithTabs
+export default EarningReportsWithTabs;

@@ -1,11 +1,19 @@
-'use client'
+'use client';
 
-import AuthRedirect from '@/components/AuthRedirect'
-import type { Locale } from '@configs/i18n'
-import type { ChildrenType } from '@core/types'
+import { useEffect, useState } from 'react';
+import AuthRedirect from '@/components/AuthRedirect';
+
+import type { Locale } from '@configs/i18n';
+import type { ChildrenType } from '@core/types';
 
 export default function AuthGuard({ children, locale }: ChildrenType & { locale: Locale }) {
-  const authenticated = localStorage.getItem('user') ?? localStorage.getItem('token')
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
-  return <>{authenticated ? children : <AuthRedirect lang={locale} />}</>
+  useEffect(() => {
+    setAuthenticated(!!(localStorage.getItem('user') || localStorage.getItem('token')));
+  }, []);
+
+  if (authenticated === null) return null;
+
+  return <>{authenticated ? children : <AuthRedirect lang={locale} />}</>;
 }

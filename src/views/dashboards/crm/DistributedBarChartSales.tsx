@@ -1,48 +1,35 @@
-'use client'
+'use client';
 
 // Next Imports
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-import CardHeader from '@mui/material/CardHeader'
-import { useTheme } from '@mui/material/styles'
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import { useTheme } from '@mui/material/styles';
 
 // Third-party Imports
-import type { ApexOptions } from 'apexcharts'
-import { useGetSalesReportWeeklyQuery } from '@/redux-store/services/order'
-import { Skeleton } from '@mui/material'
+import type { ApexOptions } from 'apexcharts';
+import { useGetSalesReportWeeklyQuery } from '@/redux-store/services/order';
+import { Skeleton } from '@mui/material';
 
 // Styled Component Imports
-const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
+const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'));
 
 const DistributedBarChartSales = () => {
-  const { data, isLoading } = useGetSalesReportWeeklyQuery()
-  const theme = useTheme()
+  const { data: report, isLoading } = useGetSalesReportWeeklyQuery();
+  const theme = useTheme();
 
-  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  const report = data?.report || []
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  // Current week sales amounts
-  const currentWeekAmounts: number[] = daysOfWeek.map(day => {
-    const match = report.find(item => item.day === day)
-    return match ? Number(match.totalAmount) : 0
-  })
+  const series = [{ data: report?.totalSales || [] }];
 
-  const totalAmount = currentWeekAmounts.reduce((sum, val) => sum + val, 0)
+  const totalWeeklyAmount = report?.totalSales?.reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-  // Dynamic previous week total if available
-  const previousWeekTotal = data?.previousWeekTotal || 0
-  const percentageChange =
-    previousWeekTotal && previousWeekTotal !== 0
-      ? Number((((totalAmount - previousWeekTotal) / previousWeekTotal) * 100).toFixed(1))
-      : 0
-
-  const series = [{ data: currentWeekAmounts }]
-  const actionSelectedColor = 'var(--mui-palette-action-selected)'
-  const successColor = theme.palette.success.main
+  const actionSelectedColor = 'var(--mui-palette-action-selected)';
+  const successColor = theme.palette.success.main;
 
   const options: ApexOptions = {
     chart: {
@@ -121,10 +108,10 @@ const DistributedBarChartSales = () => {
         }
       }
     ]
-  }
+  };
 
   if (isLoading) {
-    return <Skeleton variant='rounded' className='w-full' height={138} />
+    return <Skeleton variant='rounded' className='w-full' height={138} />;
   }
 
   return (
@@ -134,12 +121,12 @@ const DistributedBarChartSales = () => {
         <AppReactApexCharts type='bar' height={84} width='100%' options={options} series={series} />
         <div className='flex items-center justify-between flex-wrap gap-x-4 gap-y-0.5'>
           <Typography variant='h4' color='text.primary'>
-            ${totalAmount.toLocaleString()}
+            ${totalWeeklyAmount.toLocaleString()}
           </Typography>
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default DistributedBarChartSales
+export default DistributedBarChartSales;

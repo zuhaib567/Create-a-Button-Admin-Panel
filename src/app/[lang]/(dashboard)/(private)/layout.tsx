@@ -1,46 +1,46 @@
 // MUI Imports
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
 
 // Type Imports
-import type { ChildrenType } from '@core/types'
-import type { Locale } from '@configs/i18n'
+import type { ChildrenType } from '@core/types';
+import type { Locale } from '@configs/i18n';
 
 // Layout Imports
-import LayoutWrapper from '@layouts/LayoutWrapper'
-import VerticalLayout from '@layouts/VerticalLayout'
-import HorizontalLayout from '@layouts/HorizontalLayout'
+import LayoutWrapper from '@layouts/LayoutWrapper';
+import VerticalLayout from '@layouts/VerticalLayout';
+import HorizontalLayout from '@layouts/HorizontalLayout';
 
 // Component Imports
-import Providers from '@components/Providers'
-import Navigation from '@components/layout/vertical/Navigation'
-import Header from '@components/layout/horizontal/Header'
-import Navbar from '@components/layout/vertical/Navbar'
-import VerticalFooter from '@components/layout/vertical/Footer'
-import HorizontalFooter from '@components/layout/horizontal/Footer'
-import Customizer from '@core/components/customizer'
-import ScrollToTop from '@core/components/scroll-to-top'
-import AuthGuard from '@/hocs/AuthGuard'
+import Providers from '@components/Providers';
+import Navigation from '@components/layout/vertical/Navigation';
+import Header from '@components/layout/horizontal/Header';
+import Navbar from '@components/layout/vertical/Navbar';
+import VerticalFooter from '@components/layout/vertical/Footer';
+import HorizontalFooter from '@components/layout/horizontal/Footer';
+import Customizer from '@core/components/customizer';
+import ScrollToTop from '@core/components/scroll-to-top';
+import AuthGuard from '@/hocs/AuthGuard';
 
 // Config Imports
-import { i18n } from '@configs/i18n'
+import { i18n } from '@configs/i18n';
 
 // Util Imports
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@/utils/getDictionary';
 
-import { getMode, getSystemMode } from '@core/utils/serverHelpers'
+import { getMode, getSystemMode } from '@core/utils/serverHelpers';
 
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer } from 'react-toastify';
 
 const Layout = async ({ children, params }: ChildrenType & { params: { lang: Locale } }) => {
   // Vars
-  const direction = i18n.langDirection[params.lang]
-  const dictionary = await getDictionary(params.lang)
-  const mode = getMode()
-  const systemMode = getSystemMode()
+  const direction = i18n.langDirection[params.lang];
+  const dictionary = await getDictionary(params.lang);
+  const mode = getMode();
+  const systemMode = getSystemMode();
 
   return (
     <Providers direction={direction}>
-       <AuthGuard locale={params.lang}> 
+      <AuthGuard locale={params.lang}>
         <LayoutWrapper
           systemMode={systemMode}
           verticalLayout={
@@ -66,11 +66,11 @@ const Layout = async ({ children, params }: ChildrenType & { params: { lang: Loc
             <i className='tabler-arrow-up' />
           </Button>
         </ScrollToTop>
-        <Customizer dir={direction} />
-       </AuthGuard>
-       <ToastContainer />
+        {/* <Customizer dir={direction} /> */}
+      </AuthGuard>
+      <ToastContainer />
     </Providers>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

@@ -43,10 +43,13 @@ import type { ICategoryItem } from '@/types/apps/categoryTypes'
 import DebouncedInput from '@/components/common/debounced-input'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import { useDeleteCategoryMutation, useGetAllCategoriesQuery } from '@/redux-store/services/category'
+import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
+import Loader from '@/components/Loader'
 
 const CategoryTables = () => {
-  const { data: categories, isError, isLoading } = useGetAllCategoriesQuery()
+  const { data: categories, isLoading, isError, error } = useGetAllCategoriesQuery()
   const [deleteCategory, {}] = useDeleteCategoryMutation()
+  const { handleQueryError } = useQueryErrorHandler()
 
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [data, setData] = useState<ICategoryItem[]>([])
@@ -72,17 +75,18 @@ const CategoryTables = () => {
           </Typography>
         )
       }),
-      columnHelper.accessor('parent', {
+      columnHelper.accessor('name', {
         header: 'Categories',
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
-            <Image height={35} width={35} src={row.original.img} alt={row.original.parent} className='rounded-sm' />
+            {/* <Image height={35} width={35} src={row.original.img} alt={row.original.parent} className='rounded-sm' /> */}
             <div>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.parent}
+                {row.original.name}
               </Typography>
               <Typography className='font-medium text-sm truncate w-96' color='text.primary'>
-                {row.original?.parent || 'No description'}
+                {/* {row.original?.parent || 'No description'} */}
+                {row.original?.name || 'No description'}
               </Typography>
             </div>
           </div>
@@ -148,17 +152,24 @@ const CategoryTables = () => {
     onGlobalFilterChange: setGlobalFilter
   })
 
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
+
   const {
     errors,
     control,
-    categoryChildren,
-    setCategoryChildren,
+    // categoryChildren,
+    // setCategoryChildren,
     register,
     handleSubmit,
     handleSubmitCategory,
-    setCategoryImg,
-    categoryImg,
-    error,
+    addCategoryLoading,
+    // setCategoryImg,
+    // categoryImg,
+    // error: validationError,
     isSubmitted
   } = useCategorySubmit()
 
@@ -224,7 +235,7 @@ const CategoryTables = () => {
           </div>
 
           <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={() => setIsOpen(true)}>
-            Add Category
+            Add Product Category
           </Button>
 
           <Drawer
@@ -238,29 +249,29 @@ const CategoryTables = () => {
             <div className='col-span-12 lg:col-span-4'>
               <form onSubmit={handleSubmit(handleSubmitCategory)}>
                 <div className='mb-6 bg-backgroundPaper px-6 py-8 rounded-md'>
-                  <CategoryImgUpload isSubmitted={isSubmitted} setImage={setCategoryImg} image={categoryImg} />
+                  {/* <CategoryImgUpload isSubmitted={isSubmitted} setImage={setCategoryImg} image={categoryImg} /> */}
 
                   <div className='mb-6'>
-                    <p className='mb-0 text-base'>Parent</p>
+                    <p className='mb-0 text-base'>Product Category Name</p>
                     <CustomTextField
-                      {...register('parent', {
-                        required: `Parent is required!`
+                      {...register('name', {
+                        required: `Category name is required!`
                       })}
                       className='input w-full h-[44px] rounded-md border border-gray6 text-base mt-3'
                       type='text'
-                      name='parent'
-                      placeholder='Name'
+                      name='name'
+                      placeholder='Enter category name'
                     />
-                    <ErrorMsg msg={(errors?.parent?.message as string) || ''} />
+                    <ErrorMsg msg={(errors?.name?.message as string) || ''} />
                   </div>
 
-                  <CategoryChildren
+                  {/* <CategoryChildren
                     categoryChildren={categoryChildren}
                     setCategoryChildren={setCategoryChildren}
-                    error={error}
-                  />
+                    error={validationError}
+                  /> */}
 
-                  <div className='mb-6'>
+                  {/* <div className='mb-6'>
                     <p className='mb-0 text-base'>Description</p>
                     <CustomTextField
                       {...register('description', {
@@ -273,10 +284,10 @@ const CategoryTables = () => {
                       name='description'
                       placeholder='Description Here'
                     />
-                  </div>
+                  </div> */}
 
                   <Button type='submit' variant='contained' className='w-full'>
-                    Add Category
+                    <Loader loading={addCategoryLoading}>Add Product Category</Loader>
                   </Button>
                 </div>
               </form>

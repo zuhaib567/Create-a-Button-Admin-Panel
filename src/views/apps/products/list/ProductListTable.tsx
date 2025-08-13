@@ -55,6 +55,7 @@ import tableStyles from '@core/styles/table.module.css'
 import { useGetAllProductsQuery } from '@/redux-store/services/product'
 import { Box, Skeleton } from '@mui/material'
 import DebouncedInput from '@/components/common/debounced-input'
+import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -107,7 +108,8 @@ const ProductListTable = () => {
   const [status, setStatus] = useState<InvoiceType['invoiceStatus']>('')
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState('')
-  const { data: products, isLoading, isError } = useGetAllProductsQuery()
+  const { data: products, isLoading, isError, error } = useGetAllProductsQuery()
+  const { handleQueryError } = useQueryErrorHandler()
   const [data, setData] = useState<IProduct[]>([])
   const [filteredData, setFilteredData] = useState<IProduct[]>([])
 
@@ -233,6 +235,12 @@ const ProductListTable = () => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
+
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
 
   useEffect(() => {
     const filteredData = data?.filter(product => {

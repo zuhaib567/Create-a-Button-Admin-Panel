@@ -1,58 +1,58 @@
-export type InvoiceStatus = 'Paid' | string
+export type InvoiceStatus = 'Paid' | string;
 
 export type InvoiceLayoutProps = {
-  id: string | undefined
-}
+  id: string | undefined;
+};
 
 export type InvoiceClientType = {
-  name: string
-  address: string
-  company: string
-  country: string
-  contact: string
-  companyEmail: string
-}
+  name: string;
+  address: string;
+  company: string;
+  country: string;
+  contact: string;
+  companyEmail: string;
+};
 
 export type InvoiceType = {
-  id: string
-  name: string
-  total: number
-  avatar: string
-  service: string
-  dueDate: string
-  address: string
-  company: string
-  country: string
-  contact: string
-  avatarColor?: string
-  issuedDate: string
-  companyEmail: string
-  balance: string | number
-  invoiceStatus: InvoiceStatus
-  product: string
-  sku: string
-  quantity: number
-  price: number
-  status: string
-  action: string
-}
+  id: string;
+  name: string;
+  total: number;
+  avatar: string;
+  service: string;
+  dueDate: string;
+  address: string;
+  company: string;
+  country: string;
+  contact: string;
+  avatarColor?: string;
+  issuedDate: string;
+  companyEmail: string;
+  balance: string | number;
+  invoiceStatus: InvoiceStatus;
+  product: string;
+  sku: string;
+  quantity: number;
+  price: number;
+  status: string;
+  action: string;
+};
 
 export type InvoicePaymentType = {
-  iban: string
-  totalDue: string
-  bankName: string
-  country: string
-  swiftCode: string
-}
+  iban: string;
+  totalDue: string;
+  bankName: string;
+  country: string;
+  swiftCode: string;
+};
 
 export type SingleInvoiceType = {
-  invoice: InvoiceType
-  paymentDetails: InvoicePaymentType
-}
+  invoice: InvoiceType;
+  paymentDetails: InvoicePaymentType;
+};
 
 export interface IStatusType {
-  pending: string
-  delivered: string
-  processing: string
-  cancel: string
+  pending: string;
+  delivered: string;
+  processing: string;
+  cancel: string;
 }

@@ -7,14 +7,23 @@ import Grid from '@mui/material/Grid'
 import PreviewActions from './PreviewActions'
 import PreviewCard from './PreviewCard'
 import { useGetSingleOrderQuery } from '@/redux-store/services/order'
+import { useQueryErrorHandler } from '@/hooks/useQueryErrorHandler'
+import { useEffect } from 'react'
 
 const Preview = ({ id }: { id: string }) => {
-  const { data: invoiceData } = useGetSingleOrderQuery(id)
+  const { data: invoiceData, error } = useGetSingleOrderQuery(id)
+  const { handleQueryError } = useQueryErrorHandler()
 
   // Handle Print Button Click
   const handleButtonClick = () => {
     window.print()
   }
+
+  useEffect(() => {
+    if (!!error) {
+      handleQueryError(error)
+    }
+  }, [error])
 
   return (
     <Grid container spacing={6}>
